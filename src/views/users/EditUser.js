@@ -1,4 +1,5 @@
-import React,{useEffect} from "react";
+import React, { useEffect } from "react";
+import NotificationAlert from "react-notification-alert";
 
 // react-bootstrap components
 import {
@@ -13,23 +14,50 @@ import {
   Col,
 } from "react-bootstrap";
 import { useParams } from "react-router";
+import { updateUser } from "services/userService";
+import { fetchuser } from "services/userService";
 
 function EditUsers() {
-    const {id}=useParams()
-    useEffect(() => {
-        console.log(id)
-        // fetch your data here
+  const notificationAlertRef = React.useRef(null);
 
+  const { id } = useParams()
+  const [user, setUser]=React.useState(null)
+  React.useEffect(() => {
+    console.log(id)
+    // fetch your data here
+    fetchuser(id)
+    .then(res => {
+      setUser(res)
+    })
 
-    }, [])
+  }, [])
 
-    const handelSubmit=(e,val)=>{
-        e.preventDefault()
-        console.log(e.target.test.value)
-    }
+  const handelSubmit = (e, val) => {
+    e.preventDefault()
+    updateUser({name:e.target.name.value, email:e.target.email.value}, id)
+    .then(()=>{
+      const options = {
+        place: 'tc',
+        message: (
+          <div>
+            <div>
+              Items updated successfully
+            </div>
+          </div>
+        ),
+        type: "success",
+        icon: "nc-icon nc-bell-55",
+        autoDismiss: 7,
+      };
+      notificationAlertRef.current.notificationAlert(options)
+      e.target.reset()
+    })
+  }
 
   return (
     <>
+          <NotificationAlert ref={notificationAlertRef} />
+
       <Container fluid>
         <Row>
           <Col md="12">
@@ -39,111 +67,30 @@ function EditUsers() {
               </Card.Header>
               <Card.Body>
                 <Form onSubmit={handelSubmit}>
-                  <Row>
-                    <Col className="pr-1" md="5">
-                      <Form.Group>
-                        <label>Company (disabled)</label>
-                        <Form.Control
-                        name="test"
-                          placeholder="Company"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="px-1" md="3">
-                      <Form.Group>
-                        <label>Username</label>
-                        <Form.Control
-                          placeholder="Username"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <Form.Group>
-                        <label htmlFor="exampleInputEmail1">
-                          Email address
-                        </label>
-                        <Form.Control
-                          placeholder="Email"
-                          type="email"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="6">
-                      <Form.Group>
-                        <label>First Name</label>
-                        <Form.Control
-                          placeholder="Company"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="6">
-                      <Form.Group>
-                        <label>Last Name</label>
-                        <Form.Control
-                          placeholder="Last Name"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <Form.Group>
-                        <label>Address</label>
-                        <Form.Control
-                          placeholder="Home Address"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="4">
-                      <Form.Group>
-                        <label>City</label>
-                        <Form.Control
-                          placeholder="City"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="px-1" md="4">
-                      <Form.Group>
-                        <label>Country</label>
-                        <Form.Control
-                          placeholder="Country"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <Form.Group>
-                        <label>Postal Code</label>
-                        <Form.Control
-                          placeholder="ZIP Code"
-                          type="number"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <Form.Group>
-                        <label>About Me</label>
-                        <Form.Control
-                          cols="80"
-                          placeholder="Here can be your description"
-                          rows="4"
-                          as="textarea"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
+                  <Col className="p-2" md="12">
+                    <Form.Group>
+                      <label>Username</label>
+                      <Form.Control
+                        placeholder="Username"
+                        type="text"
+                        name="name"
+                        defaultValue={user?.name}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col md="12">
+                    <Form.Group>
+                      <label htmlFor="exampleInputEmail1">
+                        Email address
+                      </label>
+                      <Form.Control
+                        placeholder="Email"
+                        type="email"
+                        name="email"
+                        defaultValue={user?.email}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
                   <Button
                     className="btn-fill pull-right"
                     type="submit"

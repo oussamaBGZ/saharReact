@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import NotificationAlert from "react-notification-alert";
 
 // react-bootstrap components
 import {
@@ -12,139 +13,142 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
+import { useParams } from "react-router";
+import { fetchBook, AddBookApi } from "services/booksService";
 
 function AddBook() {
+  const notificationAlertRef = React.useRef(null);
+
+  // const { id } = useParams()
+  // const [data, setData] = useState(null)
+  // useEffect(() => {
+  //   console.log(id)
+  //   // fetch your data here
+  //   fetchBook(id)
+  //     .then((data) => {
+  //       console.log(data)
+  //       setData(data)
+  //     })
+
+  // }, [])
+
+  const handelSubmit = (e, val) => {
+    e.preventDefault()
+
+    AddBookApi({
+      title: e.target.title.value,
+      author: e.target.author.value,
+      price: e.target.price.value,
+      available: e.target.available.value,
+      quantity: e.target.quantity.value
+    }).then(() => {
+      const options = {
+        place: 'tc',
+        message: (
+          <div>
+            <div>
+              Items Added successfully
+            </div>
+          </div>
+        ),
+        type: "success",
+        icon: "nc-icon nc-bell-55",
+        autoDismiss: 7,
+      };
+      notificationAlertRef.current.notificationAlert(options)
+      e.target.reset()
+    }).catch(err => console.error(err))
+  }
+
   return (
     <>
-      <Container fluid>
-        <Row>
-          <Col md="12">
-            <Card>
-              <Card.Header>
-                <Card.Title as="h4">Add a Book</Card.Title>
-              </Card.Header>
-              <Card.Body>
-                <Form>
-                  <Row>
-                    <Col className="pr-1" md="5">
-                      <Form.Group>
-                        <label>Company (disabled)</label>
-                        <Form.Control
+        <Container fluid>
+          <NotificationAlert ref={notificationAlertRef} />
 
-                          placeholder="Company"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="px-1" md="3">
-                      <Form.Group>
-                        <label>Username</label>
-                        <Form.Control
-                          placeholder="Username"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <Form.Group>
-                        <label htmlFor="exampleInputEmail1">
-                          Email address
-                        </label>
-                        <Form.Control
-                          placeholder="Email"
-                          type="email"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="6">
-                      <Form.Group>
-                        <label>First Name</label>
-                        <Form.Control
-                          placeholder="Company"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="6">
-                      <Form.Group>
-                        <label>Last Name</label>
-                        <Form.Control
-                          placeholder="Last Name"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <Form.Group>
-                        <label>Address</label>
-                        <Form.Control
-                          placeholder="Home Address"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="4">
-                      <Form.Group>
-                        <label>City</label>
-                        <Form.Control
-                          placeholder="City"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="px-1" md="4">
-                      <Form.Group>
-                        <label>Country</label>
-                        <Form.Control
-                          placeholder="Country"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <Form.Group>
-                        <label>Postal Code</label>
-                        <Form.Control
-                          placeholder="ZIP Code"
-                          type="number"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <Form.Group>
-                        <label>About Me</label>
-                        <Form.Control
-                          cols="80"
-                          placeholder="Here can be your description"
-                          rows="4"
-                          as="textarea"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Button
-                    className="btn-fill pull-right"
-                    type="submit"
-                    variant="info"
-                  >
-                    Submit
-                  </Button>
-                  <div className="clearfix"></div>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
+          <Row>
+            <Col md="12">
+              <Card>
+                <Card.Header>
+                  <Card.Title as="h4">Edit Book</Card.Title>
+                </Card.Header>
+                <Card.Body>
+                  <Form onSubmit={handelSubmit}>
 
-        </Row>
-      </Container>
+                    <Row>
+                      <Col md="12">
+                        <Form.Group>
+                          <label>Title</label>
+                          <Form.Control
+                            name="title"
+                            placeholder="Title"
+                            type="text"
+                          ></Form.Control>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md="12">
+                        <Form.Group>
+                          <label>Author</label>
+                          <Form.Control
+                            placeholder="Author"
+                            type="text"
+                            name="author"
+
+                          ></Form.Control>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md="12">
+                        <Form.Group>
+                          <label>Price</label>
+                          <Form.Control
+                            placeholder="Price"
+                            type="number"
+                            name="price"
+
+                          ></Form.Control>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col md="12">
+                        <Form.Group>
+                          <label>quantity</label>
+                          <Form.Control
+                            placeholder="quantity"
+                            type="number"
+                            name="quantity"
+
+                          ></Form.Control>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Form.Group controlId="exampleForm.ControlSelect1">
+                      <Form.Label>Availability</Form.Label>
+                      <Form.Control name="available" as="select">
+                        <option value="true">true</option>
+                        <option value="false">false</option>
+                      </Form.Control>
+                    </Form.Group>
+
+                    <Button
+                      className="btn-fill pull-right"
+                      type="submit"
+                      variant="info"
+                    >
+                      Submit
+                    </Button>
+                    <div className="clearfix"></div>
+                  </Form>
+                </Card.Body>
+              </Card>
+            </Col>
+
+          </Row>
+        </Container>
     </>
   );
 }

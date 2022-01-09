@@ -15,9 +15,24 @@ import {
     Dropdown,
 } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
+import { fetchCommandes } from "services/commandesServices";
+import { deleteCommande } from "services/commandesServices";
+import { fetchuser } from "services/userService";
 function Commandes() {
     const notificationAlertRef = React.useRef(null);
     const history = useHistory()
+    const [data, setData]=React.useState()
+    React.useEffect(() => {
+        fetchCommandes()
+        .then(async (res)=>{
+            const data=[]
+            for (const iterator of res) {
+                const user=await fetchuser(iterator.client)
+                data.push({...iterator, ...user})
+            }
+            setData(data)
+        })
+    }, [])
     return (
         <>
             <div className="rna-container">
@@ -45,19 +60,20 @@ function Commandes() {
                                     <thead>
                                         <tr>
                                             <th className="border-0">ID</th>
-                                            <th className="border-0">Name</th>
-                                            <th className="border-0">Salary</th>
-                                            <th className="border-0">Country</th>
-                                            <th className="border-0">City</th>
+                                            <th className="border-0">user</th>
+                                            <th className="border-0">Book quantity</th>
+                                            <th className="border-0"></th>
+
                                         </tr>
                                     </thead>
                                     <tbody>
+                                            {data && data.map((el,i) =>
+
                                         <tr>
-                                            <td>1</td>
-                                            <td>Dakota Rice</td>
-                                            <td>$36,738</td>
-                                            <td>Niger</td>
-                                            <td>Oud-Turnhout</td>
+                                            <td>{i}</td>
+                                            <td>{el.name}</td>
+                                            <td>{el.orderItems.reduce((acc,el)=> acc+el.quantite,0)}</td>
+                                 
                                             <td>
                                                 <Dropdown >
                                                     <Dropdown.Toggle
@@ -77,15 +93,18 @@ function Commandes() {
                                                             href="#pablo"
                                                             onClick={(e) => {
                                                                 e.preventDefault()
-                                                                history.push(`/admin/commande/edit/${1}`)
+                                                                history.push(`/admin/commande/edit/${el._id}`)
                                                             }}
                                                         >
                                                             Edit
                                                         </Dropdown.Item>
                                                         <Dropdown.Item
                                                             href="#pablo"
-                                                            onClick={(e) => {
+                                                            onClick={async (e) => {
                                                                 e.preventDefault()
+                                                                await deleteCommande(el._id)
+                                                                setData(state => state.filter(Element => Element._id!==el._id))
+
                                                                 const options = {
                                                                     place: 'tc',
                                                                     message: (
@@ -108,63 +127,10 @@ function Commandes() {
                                                 </Dropdown>
                                             </td>
                                         </tr>
+                                            )}
 
-                                        <tr>
-                                            <td>2</td>
-                                            <td>Dakota Rice</td>
-                                            <td>$36,738</td>
-                                            <td>Niger</td>
-                                            <td>Oud-Turnhout</td>
-                                            <td>
-                                                <Dropdown >
-                                                    <Dropdown.Toggle
-                                                        aria-expanded={false}
-                                                        aria-haspopup={true}
-
-                                                        data-toggle="dropdown"
-                                                        id="navbarDropdownMenuLink"
-                                                        variant="default"
-                                                        className="m-0"
-                                                        style={{ border: "none" }}
-                                                    >
-                                                        <span className="no-icon" ></span>
-                                                    </Dropdown.Toggle>
-                                                    <Dropdown.Menu aria-labelledby="navbarDropdownMenuLink">
-                                                        <Dropdown.Item
-                                                            href="#pablo"
-                                                            onClick={(e) => {
-                                                                e.preventDefault()
-                                                                history.push(`/admin/book/edit/${2}`)
-                                                            }}
-                                                        >
-                                                            Edit
-                                                        </Dropdown.Item>
-                                                        <Dropdown.Item
-                                                            href="#pablo"
-                                                            onClick={(e) => {
-                                                                e.preventDefault()
-                                                                const options = {
-                                                                    place: 'tc',
-                                                                    message: (
-                                                                        <div>
-                                                                            <div>
-                                                                                Items deleted successfully
-                                                                            </div>
-                                                                        </div>
-                                                                    ),
-                                                                    type: "success",
-                                                                    icon: "nc-icon nc-bell-55",
-                                                                    autoDismiss: 7,
-                                                                };
-                                                                notificationAlertRef.current.notificationAlert(options)
-                                                            }}
-                                                        >
-                                                            Delete
-                                                        </Dropdown.Item>
-                                                    </Dropdown.Menu>
-                                                </Dropdown>
-                                            </td>
-                                        </tr>
+                                        
+                                   
                                     </tbody>
                                 </Table>
                             </Card.Body>

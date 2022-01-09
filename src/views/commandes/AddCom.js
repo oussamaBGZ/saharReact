@@ -1,4 +1,6 @@
+import Product from "components/Product";
 import React from "react";
+import NotificationAlert from "react-notification-alert";
 
 // react-bootstrap components
 import {
@@ -12,10 +14,53 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
+import { AddCommandeApi } from "services/commandesServices";
+import { fetchUsers } from "services/userService";
 
 function AddCommande() {
+  const [products, setProducts] = React.useState([{ livreid: '', quantite: 0, id: Date.now() }])
+  const [users, setUsers] = React.useState([])
+  const [currentUser, setCurrentUser] = React.useState(null)
+
+  const notificationAlertRef = React.useRef(null);
+
+  React.useEffect(() => {
+    console.log(products)
+    fetchUsers()
+    .then((res) => {
+      setUsers(res)
+    })
+  }, [])
+
+  const handelSubmit=(e) => {
+    e.preventDefault()
+    const data = {
+      client: currentUser,
+      orderItems: products
+    }
+    AddCommandeApi(data)
+      .then(() => {
+        const options = {
+          place: 'tc',
+          message: (
+            <div>
+              <div>
+                Items Added successfully
+              </div>
+            </div>
+          ),
+          type: "success",
+          icon: "nc-icon nc-bell-55",
+          autoDismiss: 7,
+        };
+        notificationAlertRef.current.notificationAlert(options)
+        e.target.reset()
+      }).catch(err => console.error(err))
+  }
   return (
     <>
+      <NotificationAlert ref={notificationAlertRef} />
+
       <Container fluid>
         <Row>
           <Col md="12">
@@ -24,112 +69,24 @@ function AddCommande() {
                 <Card.Title as="h4">Add a Commande</Card.Title>
               </Card.Header>
               <Card.Body>
-                <Form>
-                  <Row>
-                    <Col className="pr-1" md="5">
-                      <Form.Group>
-                        <label>Company (disabled)</label>
-                        <Form.Control
-
-                          placeholder="Company"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="px-1" md="3">
-                      <Form.Group>
-                        <label>Username</label>
-                        <Form.Control
-                          placeholder="Username"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <Form.Group>
-                        <label htmlFor="exampleInputEmail1">
-                          Email address
-                        </label>
-                        <Form.Control
-                          placeholder="Email"
-                          type="email"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="6">
-                      <Form.Group>
-                        <label>First Name</label>
-                        <Form.Control
-                          placeholder="Company"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="6">
-                      <Form.Group>
-                        <label>Last Name</label>
-                        <Form.Control
-                          placeholder="Last Name"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <Form.Group>
-                        <label>Address</label>
-                        <Form.Control
-                          placeholder="Home Address"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="4">
-                      <Form.Group>
-                        <label>City</label>
-                        <Form.Control
-                          placeholder="City"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="px-1" md="4">
-                      <Form.Group>
-                        <label>Country</label>
-                        <Form.Control
-                          placeholder="Country"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <Form.Group>
-                        <label>Postal Code</label>
-                        <Form.Control
-                          placeholder="ZIP Code"
-                          type="number"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <Form.Group>
-                        <label>About Me</label>
-                        <Form.Control
-                          cols="80"
-                          placeholder="Here can be your description"
-                          rows="4"
-                          as="textarea"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
+                <Form onSubmit={handelSubmit}>
+                  <Form.Group controlId="exampleForm.ControlSelect1">
+                    <Form.Label>User</Form.Label>
+                    <Form.Control name="available" as="select" onChange={(e) => setCurrentUser(e.target.value)}>
+                    <option >Select A value</option>
+                      {users && users.map(el =><option key={el.id} value={el.id}>{el.name}</option>)}
+                    </Form.Control>
+                  </Form.Group>
+                  {products.map((el, i) => <Product key={i} id={el.id} products={products} setProducts={setProducts} />)}
+                  <Button
+                    className="btn-fill pull-right mr-3"
+                    variant="info"
+                    onClick={() => {
+                      setProducts(state => [...state, { livreid: '', quantite: 0, id: Date.now() }])
+                    }}
+                  >
+                    add product
+                  </Button>
                   <Button
                     className="btn-fill pull-right"
                     type="submit"
