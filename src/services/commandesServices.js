@@ -1,4 +1,4 @@
-const commandesEndPoint = "http://localhost:9600"
+const commandesEndPoint = "http://localhost:8889/COMMANDESERVICE"
 
 export const fetchCommandes = async () => {
     const res = await fetch(commandesEndPoint

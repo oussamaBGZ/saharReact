@@ -45,19 +45,15 @@ function Factures() {
                                     <thead>
                                         <tr>
                                             <th className="border-0">ID</th>
-                                            <th className="border-0">Name</th>
-                                            <th className="border-0">Salary</th>
-                                            <th className="border-0">Country</th>
-                                            <th className="border-0">City</th>
+                                            <th className="border-0">Facture</th>
+                                            <th className="border-0">Commande</th>
+                                       
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
                                             <td>1</td>
                                             <td>Dakota Rice</td>
-                                            <td>$36,738</td>
-                                            <td>Niger</td>
-                                            <td>Oud-Turnhout</td>
                                             <td>
                                             <Dropdown >
                                                     <Dropdown.Toggle
@@ -109,62 +105,6 @@ function Factures() {
                                             </td>
                                         </tr>
             
-                                        <tr>
-                                            <td>2</td>
-                                            <td>Dakota Rice</td>
-                                            <td>$36,738</td>
-                                            <td>Niger</td>
-                                            <td>Oud-Turnhout</td>
-                                            <td>
-                                                <Dropdown >
-                                                    <Dropdown.Toggle
-                                                        aria-expanded={false}
-                                                        aria-haspopup={true}
-                                                        
-                                                        data-toggle="dropdown"
-                                                        id="navbarDropdownMenuLink"
-                                                        variant="default"
-                                                        className="m-0"
-                                                        style={{border:"none"}}
-                                                    >
-                                                        <span className="no-icon" ></span>
-                                                    </Dropdown.Toggle>
-                                                    <Dropdown.Menu aria-labelledby="navbarDropdownMenuLink">
-                                                        <Dropdown.Item
-                                                            href="#pablo"
-                                                            onClick={(e) =>{
-                                                                 e.preventDefault()
-                                                                 history.push(`/admin/book/edit/${2}`)
-                                                                }}
-                                                        >
-                                                            Edit
-                                                        </Dropdown.Item>
-                                                        <Dropdown.Item
-                                                            href="#pablo"
-                                                            onClick={(e) => {
-                                                                e.preventDefault()
-                                                                const options = {
-                                                                    place: 'tc',
-                                                                    message: (
-                                                                      <div>
-                                                                        <div>
-                                                                          Items deleted successfully
-                                                                        </div>
-                                                                      </div>
-                                                                    ),
-                                                                    type: "success",
-                                                                    icon: "nc-icon nc-bell-55",
-                                                                    autoDismiss: 7,
-                                                                  };
-                                                                notificationAlertRef.current.notificationAlert(options)
-                                                            }}
-                                                        >
-                                                            Delete
-                                                        </Dropdown.Item>
-                                                    </Dropdown.Menu>
-                                                </Dropdown>
-                                            </td>
-                                        </tr>
                                     </tbody>
                                 </Table>
                             </Card.Body>

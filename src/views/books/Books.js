@@ -23,10 +23,7 @@ function Books() {
     const history=useHistory()
     const [data,setData]=React.useState(null)
     useEffect(()=>{
-        fetchUsers()
-        .then((res)=>{
-            console.log(res)
-        })
+        
         fetchBooks()
         .then(data => {
             console.log(data)

@@ -1,4 +1,4 @@
-const bookEndPoint= "http://localhost:9500"
+const bookEndPoint= "http://localhost:9501"
 
 export const fetchBooks=async ()=>{
     const res= await fetch(bookEndPoint+'/books')
